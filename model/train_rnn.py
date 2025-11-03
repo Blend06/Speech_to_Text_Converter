@@ -30,26 +30,31 @@ for sample in x:
 
 x = x_padded
 
-#Encode text labels
+# Process full sentences (not just single words)
+print("Processing full sentences...")
+print(f"Sample texts: {y_texts[:3]}")  # Show first 3 examples
+
+# Convert text to character sequences
 y_sequences = [text_to_sequence(t) for t in y_texts]
+max_text_len = max(len(seq) for seq in y_sequences) if y_sequences else 1
+
+print(f"Max text length: {max_text_len} characters")
 
 # Pad text sequences to match audio length (200 time steps)
 y_padded = np.zeros((len(y_sequences), max_audio_len))
 for i, seq in enumerate(y_sequences):
-    # Repeat the sequence to fill the audio length
     if len(seq) > 0:
-        # Repeat the sequence to match audio length
-        repeated_seq = (seq * (max_audio_len // len(seq) + 1))[:max_audio_len]
-        y_padded[i, :] = repeated_seq
-    else:
-        # If empty sequence, use padding token (0)
-        y_padded[i, :] = 0
+        # Truncate if text is longer than audio
+        if len(seq) > max_audio_len:
+            seq = seq[:max_audio_len]
+        # Place text at beginning, pad rest with zeros
+        y_padded[i, :len(seq)] = seq
 
 y_onehot = to_categorical(y_padded, num_classes=len(VOCAB))
 
 #BUILD MODEL
 input_dim = x[0].shape[1]
-output_dim = len(VOCAB)
+output_dim = len(VOCAB)  # Number of characters in vocabulary
 model = build_model(input_dim, output_dim)
 
 model.fit(np.array(x), y_onehot, epochs=10, batch_size=4, validation_split=0.2)
