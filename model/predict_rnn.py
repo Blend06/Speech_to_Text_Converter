@@ -46,6 +46,6 @@ def predict(file_path):
 # Test with one of our training files (use absolute path)
 import os
 data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
-audio_file = os.path.join(data_dir, "hello_003.wav")
+audio_file = os.path.join(data_dir, "as_008.wav")
 print(f"Looking for audio file at: {audio_file}")
 predict(audio_file)

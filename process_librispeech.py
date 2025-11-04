@@ -3,7 +3,7 @@ import shutil
 import librosa
 import soundfile as sf
 
-def process_librispeech_files(librispeech_path, output_dir="data", max_files=50):
+def process_librispeech_files(librispeech_path, output_dir="data", max_files=1000):
     """
     Process LibriSpeech files and convert them for training
     """
@@ -68,6 +68,11 @@ def process_librispeech_files(librispeech_path, output_dir="data", max_files=50)
                         # Save as WAV
                         sf.write(output_path, audio, 16000)
                         
+                        # Save full transcript to transcripts.txt
+                        transcript_file = os.path.join(output_dir, "transcripts.txt")
+                        with open(transcript_file, 'a', encoding='utf-8') as f:
+                            f.write(f"{output_filename}\t{transcript}\n")
+                        
                         processed_count += 1
                         print(f"Processed {processed_count}: {output_filename} -> '{transcript[:50]}...'")
                         
@@ -91,5 +96,5 @@ if __name__ == "__main__":
         print(f"Path not found: {librispeech_path}")
         print("Please check the path and try again.")
     else:
-        process_librispeech_files(librispeech_path, max_files=30)
+        process_librispeech_files(librispeech_path, max_files=300)
         print("\nReady to train! Run: python model/train_rnn.py")
