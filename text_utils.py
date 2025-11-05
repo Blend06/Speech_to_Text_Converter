@@ -1,12 +1,16 @@
 import string
 
-#Create vocabulary for full sentences (LibriSpeech has punctuation)
-VOCAB = list(string.ascii_lowercase + " .,!?'-") + ['<PAD>']  # Add padding token
+#Create vocabulary for CTC (includes blank token)
+VOCAB = list(string.ascii_lowercase + " .,!?'-")
+BLANK_TOKEN = len(VOCAB)  # CTC blank token index
+VOCAB_SIZE = len(VOCAB) + 1  # +1 for blank token
+
 char_to_index = {c: i for i, c in enumerate(VOCAB)}
 index_to_char = {i: c for c, i in char_to_index.items()}
 
-print(f"Vocabulary size: {len(VOCAB)} characters")
+print(f"Vocabulary size: {VOCAB_SIZE} characters (including CTC blank)")
 print(f"Characters: {''.join(VOCAB[:10])}... (showing first 10)")
+print(f"Blank token index: {BLANK_TOKEN}")
 
 def text_to_sequence(text):
     # Clean text and convert to sequence
